@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dual Agent Conversation Platform</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Scenario Selection Modal -->
+    <div id="scenario-modal" class="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="modal-content bg-white rounded-xl shadow-2xl p-8 max-w-4xl max-h-[90vh] overflow-y-auto m-4">
+            <div class="text-center mb-8">
+                <h2 class="text-3xl font-bold text-gray-800 mb-4">选择对话场景</h2>
+                <p class="text-gray-600 text-lg">选择一个社交情境来练习沟通技巧：</p>
+            </div>
+            <div id="scenario-list" class="scenario-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Scenarios will be loaded dynamically -->
+            </div>
+            <div class="mt-8 text-center">
+                <button id="create-custom-scenario" class="bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 text-white font-semibold py-3 px-6 rounded-lg shadow-lg transition-all duration-300 transform hover:scale-105">
+                    🎭 创建自定义场景
+                </button>
+            </div>
+            <div class="modal-loading text-center py-12" id="scenario-loading">
+                <div class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
+                <p class="text-gray-600 mt-4">加载场景中...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Custom Scenario Creation Modal -->
+    <div id="custom-scenario-modal" class="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="modal-content bg-white rounded-xl shadow-2xl p-6 max-w-6xl max-h-[95vh] overflow-y-auto m-4 w-full">
+            <div class="text-center mb-6">
+                <h2 class="text-2xl font-bold text-gray-800 mb-2">🎭 创建自定义场景</h2>
+                <p class="text-gray-600">自定义两个角色并为他们选择合适的沟通工具</p>
+            </div>
+
+            <!-- Back to scenarios button -->
+            <div class="mb-4">
+                <button id="back-to-scenarios" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg transition-colors">
+                    ← 返回场景选择
+                </button>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Agent 1 Configuration -->
+                <div class="bg-blue-50 rounded-lg p-6">
+                    <h3 class="text-xl font-semibold text-blue-800 mb-4">👤 角色一配置</h3>
+
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">角色名称</label>
+                            <input type="text" id="agent1-name" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="例如：小张">
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">角色描述</label>
+                            <input type="text" id="agent1-role" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="例如：内向的软件工程师">
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">详细背景 (角色性格、背景故事等)</label>
+                            <textarea id="agent1-content" rows="8" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="描述角色的背景、性格特点、当前状况等..."></textarea>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">选择沟通工具</label>
+                            <div id="agent1-tools" class="space-y-2 max-h-48 overflow-y-auto">
+                                <!-- Tool checkboxes will be loaded here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Agent 2 Configuration -->
+                <div class="bg-green-50 rounded-lg p-6">
+                    <h3 class="text-xl font-semibold text-green-800 mb-4">🤖 角色二配置</h3>
+
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">角色名称</label>
+                            <input type="text" id="agent2-name" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500" placeholder="例如：李老师">
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">角色描述</label>
+                            <input type="text" id="agent2-role" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500" placeholder="例如：经验丰富的开发者">
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">详细背景 (角色性格、背景故事等)</label>
+                            <textarea id="agent2-content" rows="8" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500" placeholder="描述角色的背景、性格特点、当前状况等..."></textarea>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">选择沟通工具</label>
+                            <div id="agent2-tools" class="space-y-2 max-h-48 overflow-y-auto">
+                                <!-- Tool checkboxes will be loaded here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Start Conversation Button -->
+            <div class="mt-8 text-center">
+                <button id="start-custom-scenario" class="bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600 text-white font-semibold py-3 px-8 rounded-lg shadow-lg transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed">
+                    🚀 开始对话
+                </button>
+            </div>
+
+            <!-- Loading state -->
+            <div id="custom-scenario-loading" class="hidden text-center py-8">
+                <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+                <p class="text-gray-600 mt-2">加载工具中...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Chat Interface -->
+    <div id="main-interface" class="hidden">
+        <!-- Header -->
+        <header class="chat-header bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-gray-200 p-3 compact-header">
+            <div class="flex justify-between items-center max-w-7xl mx-auto">
+                <!-- Left Agent Avatar -->
+                <div class="agent-avatar-compact left">
+                    <div class="avatar-circle" id="agent1-circle">
+                        <div class="agent-avatar-emoji" id="agent1-avatar">👤</div>
+                        <div class="status-ring" id="agent1-ring"></div>
+                        <div class="glow-effect" id="agent1-glow"></div>
+                    </div>
+                    <div class="agent-name-compact">
+                        <span id="agent1-name" class="font-medium text-sm">Agent 1</span>
+                    </div>
+                </div>
+
+                <!-- Center: Scenario Info -->
+                <div class="text-center flex-1 mx-4">
+                    <h1 id="scenario-title" class="text-lg font-bold text-gray-800 scenario-title">Coffee Shop</h1>
+                    <p id="scenario-description" class="text-xs text-gray-600 hidden md:block">Practice conversation</p>
+
+                    <!-- Tool Display (moved to overlay) -->
+                    <div id="header-tool-display" class="hidden tool-overlay">
+                        <div class="tool-overlay-content">
+                            <div class="flex items-center space-x-3">
+                                <div class="tool-icon-medium" id="header-tool-icon">🛠️</div>
+                                <div class="text-left">
+                                    <h4 id="header-tool-name" class="font-semibold text-purple-800 text-sm"></h4>
+                                    <p id="header-tool-description" class="text-xs text-purple-600"></p>
+                                </div>
+                            </div>
+                            <button id="close-header-tool" class="close-tool-btn">&times;</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Agent Avatar -->
+                <div class="agent-avatar-compact right">
+                    <div class="avatar-circle" id="agent2-circle">
+                        <div class="agent-avatar-emoji" id="agent2-avatar">🤖</div>
+                        <div class="status-ring" id="agent2-ring"></div>
+                        <div class="glow-effect" id="agent2-glow"></div>
+                    </div>
+                    <div class="agent-name-compact">
+                        <span id="agent2-name" class="font-medium text-sm">Agent 2</span>
+                    </div>
+                </div>
+
+                <!-- Session Controls -->
+                <div class="session-controls-compact flex">
+                    <button id="pause-btn" class="control-btn-mini">
+                        <span>⏸️</span>
+                    </button>
+                    <button id="review-btn" class="control-btn-mini">
+                        <span>📊</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Mobile controls row -->
+            <div class="mobile-controls md:hidden mt-2 flex justify-center space-x-4">
+                <button id="pause-btn-mobile" class="control-btn-mobile">
+                    <span>⏸️</span><span class="ml-1 text-xs">Pause</span>
+                </button>
+                <button id="review-btn-mobile" class="control-btn-mobile">
+                    <span>📊</span><span class="ml-1 text-xs">Review</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- Tool Detail Display -->
+        <div id="tool-detail-display" class="tool-detail-display hidden">
+            <div class="tool-detail-content">
+                <div class="tool-detail-header">
+                    <h3 id="tool-detail-title">沟通工具详情</h3>
+                    <button id="close-tool-detail" class="close-btn">&times;</button>
+                </div>
+                <div class="tool-detail-body">
+                    <div class="tool-icon-large" id="tool-detail-icon">🛠️</div>
+                    <div class="tool-info">
+                        <h4 id="tool-detail-name">工具名称</h4>
+                        <p id="tool-detail-description">工具描述</p>
+                        <div class="tool-usage">
+                            <h5>使用场景:</h5>
+                            <p id="tool-detail-reason">使用原因</p>
+                        </div>
+                        <div class="tool-application">
+                            <h5>具体应用:</h5>
+                            <p id="tool-detail-application">应用方式</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <main class="chat-main bg-gray-50 overflow-hidden flex flex-col mobile-optimized">
+            <div class="w-full max-w-lg mx-auto p-3 flex-1 flex flex-col overflow-hidden">
+                <!-- Conversation Stats Bar -->
+                <div class="conversation-stats bg-white rounded-lg shadow-sm border p-4 mb-4">
+                    <div class="flex justify-center items-center space-x-8 text-sm">
+                        <div class="stat-item flex items-center space-x-2">
+                            <span class="stat-label font-medium text-gray-600">对话轮数:</span>
+                            <span id="turn-count" class="bg-blue-100 text-blue-800 px-2 py-1 rounded-full font-semibold">0</span>
+                        </div>
+                        <div class="stat-item flex items-center space-x-2">
+                            <span class="stat-label font-medium text-gray-600">工具使用:</span>
+                            <span id="tools-count" class="bg-green-100 text-green-800 px-2 py-1 rounded-full font-semibold">0</span>
+                        </div>
+                        <div class="stat-item flex items-center space-x-2">
+                            <span class="stat-label font-medium text-gray-600">指导次数:</span>
+                            <span id="hints-count" class="bg-purple-100 text-purple-800 px-2 py-1 rounded-full font-semibold">0</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Chat Window -->
+                <section class="chat-window bg-white rounded-lg shadow-lg border flex-1 flex flex-col overflow-hidden">
+                    <!-- Current Turn Indicator -->
+                    <div class="turn-indicator bg-gradient-to-r from-gray-100 to-gray-50 border-b p-3 flex-shrink-0">
+                        <div class="current-turn flex items-center justify-center space-x-3">
+                            <span id="current-turn-text" class="font-medium text-gray-700">Waiting to start...</span>
+                            <div class="typing-indicator hidden" id="typing-indicator">
+                                <div class="typing-dots flex space-x-1">
+                                    <div class="w-2 h-2 bg-blue-500 rounded-full animate-bounce"></div>
+                                    <div class="w-2 h-2 bg-blue-500 rounded-full animate-bounce" style="animation-delay: 0.1s"></div>
+                                    <div class="w-2 h-2 bg-blue-500 rounded-full animate-bounce" style="animation-delay: 0.2s"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Messages Container -->
+                    <div id="chat-messages" class="messages-container flex-1 overflow-y-auto p-4 space-y-4" style="scroll-behavior: smooth;">
+                        <div class="welcome-message text-center p-8 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border border-blue-200">
+                            <h3 class="text-xl font-bold text-blue-800 mb-2">🎭 对话即将开始...</h3>
+                            <p class="text-blue-600">观看两个AI智能体练习对话技巧，您可以随时暂停并提供指导。</p>
+                        </div>
+                    </div>
+
+                    <!-- User Intervention Panel -->
+                    <div id="intervention-panel" class="intervention-panel hidden bg-yellow-50 border-t border-yellow-200 p-4 flex-shrink-0">
+                        <h4 class="text-lg font-semibold text-yellow-800 mb-2">💡 指导对话</h4>
+                        <p class="text-yellow-700 mb-3">为当前发言者提供指导，帮助改善对话方式：</p>
+                        <textarea id="user-hint"
+                                class="w-full border border-yellow-300 rounded-lg p-3 focus:ring-2 focus:ring-yellow-500 focus:border-transparent resize-none"
+                                placeholder="例如：试试问一个关于他们兴趣的开放式问题..."
+                                rows="3"></textarea>
+                        <div class="intervention-actions flex space-x-3 mt-3">
+                            <button id="apply-hint-btn" class="control-btn bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-lg transition-colors duration-200">
+                                应用指导
+                            </button>
+                            <button id="cancel-hint-btn" class="control-btn bg-gray-400 hover:bg-gray-500 text-white px-4 py-2 rounded-lg transition-colors duration-200">
+                                取消
+                            </button>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <!-- Review Modal -->
+    <div id="review-modal" class="modal hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="modal-content bg-white rounded-xl shadow-2xl p-8 max-w-4xl max-h-[90vh] overflow-y-auto m-4">
+            <div class="modal-header flex justify-between items-center mb-6 pb-4 border-b border-gray-200">
+                <h2 class="text-2xl font-bold text-gray-800">📊 对话评估报告</h2>
+                <button id="close-review" class="close-btn text-gray-400 hover:text-gray-600 text-2xl">&times;</button>
+            </div>
+            <div id="review-content" class="space-y-6">
+                <!-- Review content will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Tool Visualization -->
+    <div id="tool-tooltip" class="tool-tooltip hidden">
+        <div class="tooltip-content">
+            <h4 id="tooltip-title"></h4>
+            <p id="tooltip-description"></p>
+            <div class="tooltip-reason" id="tooltip-reason"></div>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div id="loading-overlay" class="loading-overlay hidden">
+        <div class="loading-spinner">
+            <div class="spinner"></div>
+            <p>Connecting to AI agents...</p>
+        </div>
+    </div>
+
+    <script src="config.js"></script>
+    <script src="markdown.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>

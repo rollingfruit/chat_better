@@ -1,0 +1,16 @@
+node_modules/
+.env
+
+test*.js
+package-lock.json
+sessions/
+frontend/test*.html
+digest.txt
+TODO
+logs/
+.DS_Store
+docs/imgs/arch.xml
+create_avatars.py
+docs/imgs/arch-hw.xml
+docs/imgs/apple-style.html
+git-history.txt
