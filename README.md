@@ -1,25 +1,35 @@
-# Dual Agent Conversation Learning Platform
+# 观摩Agent聊天
 
 AI双智能体对话学习平台，实时观察并指导AI智能体对话，学习高级沟通技巧。
 
-社交场景聊天Agent
 
 ## 系统架构
 
 ![系统架构图](docs/imgs/arch.png)
 
 ## 核心功能
+### 🎭 智能角色扮演
+- **双Agent对话**：两个AI智能体进行真实对话互动
 
-- **场景选择**：多种社交场景（技术聚会、咖啡厅等）
-- **实时流式对话**：SSE技术实现AI回复实时显示
-- **沟通工具可视化**：可点击查看FORD方法等沟通原理详情
-- **用户干预指导**：暂停对话并提供引导建议
-- **对话分析评估**：生成详细的对话效果报告
-- **Markdown渲染**：支持粗体、换行等格式化文本显示
+  <img src="docs/imgs/chat_job-1角色初始化.gif" width="50%">
 
-## 使用案例
+- **角色定制**：自定义性格、背景、专业技能等角色属性
+  <img src="docs/imgs/场景自定义.png" width="50%">
+### 🛠️ 动态工具调用
+- **智能工具选择**：根据对话内容自动调用相应工具
+- **长期记忆管理**：自动压缩历史对话，保留关键信息
+  <img src="docs/imgs/chat_job_2多种工具-记忆压缩.gif" width="80%">
 
-详细的使用演示和功能介绍请参考：[使用案例文档](docs/使用案例.md)
+### 🎯 实时干预指导
+- **上帝模式**：随时暂停对话，给Agent下达新指令
+- **策略调整**：实时改变对话方向和深度
+  <img src="docs/imgs/chat_job_3打断.gif" width="50%">
+
+### 📊 智能评估报告
+- **自动生成**：对话结束后立即生成详细评估
+- **多维分析**：技能评分、亮点分析、改进建议
+  <img src="docs/imgs/chat_job_4总结报告.gif" width="50%">
+
 ## 快速开始
 
 1. **简单启动（推荐）：**
@@ -45,40 +55,12 @@ AI双智能体对话学习平台，实时观察并指导AI智能体对话，学�
 
 - **后端**：Node.js + Express + SSE流式传输
 - **前端**：原生JavaScript + 实时更新 + Markdown渲染
-- **AI服务**：OpenRouter API + Gemini 2.5 Flash模型
+- **AI服务**：OpenRouter API 任选AI模型
 - **数据**：Markdown场景文件 + JSON对话记录
 
-## 项目结构
 
-```
-完整Directory structure:
-└── /./
-    ├── frontend/
-    │   ├── index.html
-    │   ├── styles.css
-    │   ├── config.js
-    │   ├── app.js
-    │   └── markdown.js
-    ├── .claude/
-    ├── backend/
-    │   ├── server.js
-    │   ├── utils/
-    │   │   ├── openrouterClient.js
-    │   │   ├── apiLogger.js
-    │   │   ├── conversationTools.js
-    │   │   ├── sessionManager.js
-    │   │   └── scenarioLoader.js
-    │   └── routes/
-    │       ├── review.js
-    │       ├── scenarios.js
-    │       └── chat.js
-    ├── docs/
-    ├── run.sh
-    ├── README.md
-    ├── logs/
-    ├── scenarios/
-    │   ├── tech_meetup/
-    │   └── coffee_shop/
-    │       ├── agent_2.md
-    │       └── agent_1.md
-    └── data/
+## 联系开发者
+
+**微信:** ，备注暗号`chat`，进群讨论
+
+<img src="docs/imgs/se.png" alt="微信二维码" width="150" height="150">
