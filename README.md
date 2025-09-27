@@ -14,20 +14,24 @@ AI双智能体对话学习平台，实时观察并指导AI智能体对话，学�
   <img src="docs/imgs/chat_job-1角色初始化.gif" width="50%">
 
 - **角色定制**：自定义性格、背景、专业技能等角色属性
-  <img src="docs/imgs/场景自定义.png" width="50%">
+  
+  <img src="docs/imgs/场景自定义.png" width="80%">
 ### 🛠️ 动态工具调用
 - **智能工具选择**：根据对话内容自动调用相应工具
 - **长期记忆管理**：自动压缩历史对话，保留关键信息
-  <img src="docs/imgs/chat_job_2多种工具-记忆压缩.gif" width="80%">
+  
+  <img src="docs/imgs/chat_job_2多种工具-记忆压缩.gif" width="50%">
 
 ### 🎯 实时干预指导
 - **上帝模式**：随时暂停对话，给Agent下达新指令
 - **策略调整**：实时改变对话方向和深度
+  
   <img src="docs/imgs/chat_job_3打断.gif" width="50%">
 
 ### 📊 智能评估报告
 - **自动生成**：对话结束后立即生成详细评估
 - **多维分析**：技能评分、亮点分析、改进建议
+  
   <img src="docs/imgs/chat_job_4总结报告.gif" width="50%">
 
 ## 快速开始
