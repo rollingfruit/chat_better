@@ -329,12 +329,15 @@ class ConversationApp {
                 break;
 
             case 'message_start':
-                this.currentMessage = this.createMessage(data.sender);
+                if (!this.currentMessage) {
+                    this.currentMessage = this.createMessage(data.sender);
+                }
 
-                // Apply any pending tool calls to the new message
+                // Apply any pending tool calls to the message.
+                // This is a fallback for cases where tool_use might still get cached.
                 if (this.pendingToolCalls.length > 0) {
                     for (const toolData of this.pendingToolCalls) {
-                        this.addToolIndicator(this.currentMessage, toolData);
+                        this.updateOrAddToolIndicator(this.currentMessage, toolData);
                     }
                     this.pendingToolCalls = []; // Clear pending tools
                 }
@@ -355,15 +358,30 @@ class ConversationApp {
                 this.updateStats();
                 break;
 
-            case 'tool_use':
-                if (this.currentMessage) {
-                    // Message exists, add tool indicator immediately
-                    this.addToolIndicator(this.currentMessage, data);
-                } else {
-                    // No current message, cache the tool call for later
-                    console.log(`🔧 Caching tool call: ${data.toolName} (no current message)`);
-                    this.pendingToolCalls.push(data);
+            case 'tool_selected':
+                // Handle early tool selection notification
+                console.log(` 本次 Tool selected: ${data.toolName}`);
+                // Show tool selection in header immediately
+                this.showToolSelectionNotification(data.toolName, data.sender);
+
+                // Create message container if it doesn't exist yet
+                if (!this.currentMessage) {
+                    this.currentMessage = this.createMessage(data.sender);
                 }
+
+                break;
+
+            case 'tool_use':
+                if (!this.currentMessage) {
+                    // If tool_use is the first event for a turn, create the message bubble.
+                    this.currentMessage = this.createMessage(data.sender);
+                }
+                // Update existing placeholder or add a new expanded indicator in the message
+                this.updateOrAddToolIndicator(this.currentMessage, data);
+
+                // Show the full tool details in the header overlay
+                this.showHeaderToolDetail(data.toolName, data.reason, data.application);
+
                 this.stats.toolsUsed++;
                 this.updateStats();
                 break;
@@ -382,7 +400,7 @@ class ConversationApp {
 
                 const senderName = this.getAgentDisplayName(data.sender);
                 const nextName = this.getAgentDisplayName(data.nextTurn);
-                console.log(`🔄 Turn ended: ${senderName} → ${nextName} (Backend will auto-continue if not paused)`);
+                console.log(` Turn ended: ${senderName} → ${nextName} (Backend will auto-continue if not paused)`);
                 break;
 
             case 'session_end':
@@ -416,7 +434,7 @@ class ConversationApp {
             agentAvatar = `<img src="${agentData.avatar}" alt="${agentName}" class="avatar-image" />`;
         } else {
             // Fallback to emoji
-            agentAvatar = isAgent1 ? '👤' : '🤖';
+            agentAvatar = isAgent1 ? '' : '';
         }
 
         const bubbleColor = isAgent1 ? 'bg-blue-100 border-blue-200' : 'bg-green-100 border-green-200';
@@ -430,10 +448,10 @@ class ConversationApp {
                         ${agentName}
                     </span>
                 </div>
+                <div class="message-tools flex flex-wrap gap-2 mb-2 ${isAgent1 ? 'justify-start' : 'justify-end'}"></div>
                 <div class="message-bubble ${bubbleColor} ${textColor} border rounded-2xl p-4 shadow-sm">
                     <span class="message-text"></span>
                 </div>
-                <div class="message-tools flex flex-wrap gap-2 mt-2 ${isAgent1 ? 'justify-start' : 'justify-end'}"></div>
             </div>
             ${!isAgent1 ? `<div class="message-avatar">${agentAvatar}</div>` : ''}
         `;
@@ -448,6 +466,15 @@ class ConversationApp {
 
     appendToken(messageEl, token) {
         const textEl = messageEl.querySelector('.message-text');
+
+        // Check if this is the first token (text is empty)
+        const isFirstToken = textEl.textContent === '';
+
+        if (isFirstToken) {
+            // Collapse any expanded tool indicators before showing message content
+            this.collapseExpandedTools(messageEl);
+        }
+
         textEl.textContent += token;
 
         // Smart auto-scroll: only scroll if user is near bottom
@@ -480,6 +507,83 @@ class ConversationApp {
         `;
 
         toolsEl.appendChild(toolEl);
+    }
+
+
+    updateOrAddToolIndicator(messageEl, toolData) {
+        const toolsEl = messageEl.querySelector('.message-tools');
+
+        // Check if there's an expanded placeholder for this tool
+        const existingIndicator = Array.from(toolsEl.children).find(
+            el => el.dataset.toolName === toolData.toolName && el.dataset.expanded === 'true'
+        );
+
+        const formattedName = this.formatToolName(toolData.toolName);
+        const description = this.getToolDescription(toolData.toolName);
+
+        const innerHTML = `
+            <div class="flex items-start space-x-3">
+                <span class="text-2xl">${this.getToolIcon(toolData.toolName)}</span>
+                <div class="flex-1">
+                    <div class="font-bold text-purple-900 text-base mb-1">${formattedName}</div>
+                    <div class="text-sm text-purple-700 mb-2">${description}</div>
+                    <div class="text-xs text-purple-600 mb-1">
+                        <span class="font-semibold">使用原因：</span>${toolData.reason || '未提供'}
+                    </div>
+                    ${toolData.application ? `
+                    <div class="text-xs text-purple-600">
+                        <span class="font-semibold">应用方式：</span>${toolData.application}
+                    </div>
+                    ` : ''}
+                </div>
+            </div>
+        `;
+
+        if (existingIndicator) {
+            // Update the existing expanded card with full data
+            existingIndicator.dataset.reason = toolData.reason;
+            existingIndicator.dataset.application = toolData.application;
+            existingIndicator.innerHTML = innerHTML;
+        } else {
+            // No placeholder found, create a new expanded card directly.
+            const toolEl = document.createElement('div');
+            toolEl.className = 'tool-indicator-expanded bg-gradient-to-r from-purple-50 to-pink-50 border-2 border-purple-300 rounded-lg p-4 shadow-md transition-all duration-300';
+            toolEl.dataset.toolName = toolData.toolName;
+            toolEl.dataset.expanded = 'true';
+            toolEl.dataset.reason = toolData.reason;
+            toolEl.dataset.application = toolData.application;
+            toolEl.innerHTML = innerHTML;
+            toolsEl.appendChild(toolEl);
+        }
+    }
+
+    collapseExpandedTools(messageEl) {
+        const toolsEl = messageEl.querySelector('.message-tools');
+        const expandedTools = Array.from(toolsEl.children).filter(
+            el => el.dataset.expanded === 'true'
+        );
+
+        expandedTools.forEach(expandedTool => {
+            const toolName = expandedTool.dataset.toolName;
+            const reason = expandedTool.dataset.reason;
+            const application = expandedTool.dataset.application;
+
+            // Replace with collapsed tag version
+            const collapsedEl = document.createElement('div');
+            collapsedEl.className = 'tool-indicator bg-gradient-to-r from-purple-100 to-pink-100 border border-purple-200 text-purple-800 px-3 py-1 rounded-full text-sm font-medium cursor-pointer hover:shadow-md transition-all duration-200 inline-flex items-center space-x-2';
+            collapsedEl.dataset.toolName = toolName;
+            collapsedEl.dataset.reason = reason || '';
+            collapsedEl.dataset.application = application || '';
+
+            const formattedName = this.formatToolName(toolName);
+            collapsedEl.innerHTML = `
+                <span class="text-base">${this.getToolIcon(toolName)}</span>
+                <span>${formattedName}</span>
+            `;
+
+            // Replace expanded with collapsed
+            expandedTool.replaceWith(collapsedEl);
+        });
     }
 
     formatToolName(toolName) {
@@ -834,6 +938,28 @@ class ConversationApp {
 
         // Use the new header tool display instead of the old modal
         this.showHeaderToolDetail(toolName, reason, application);
+    }
+
+    showToolSelectionNotification(toolName, sender) {
+        // Clear existing timeout
+        if (this.toolDetailTimeout) {
+            clearTimeout(this.toolDetailTimeout);
+        }
+
+        const agentName = this.getAgentDisplayName(sender);
+
+        // Update header tool content with "selecting" state
+        document.getElementById('header-tool-name').textContent = this.formatToolName(toolName);
+        document.getElementById('header-tool-description').textContent = this.getToolDescription(toolName);
+        document.getElementById('header-tool-reason').textContent = `${agentName} 正在使用此工具...`;
+        document.getElementById('header-tool-icon').textContent = this.getToolIcon(toolName);
+
+        // Show with smooth transition
+        const headerToolEl = document.getElementById('header-tool-display');
+        headerToolEl.classList.remove('hidden');
+        headerToolEl.style.position = 'relative';
+
+        // Don't auto-hide - will be updated when tool_use event arrives with full details
     }
 
     showHeaderToolDetail(toolName, reason, application) {

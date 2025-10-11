@@ -251,6 +251,7 @@ async function streamConversation(res, session, messages, currentAgent, sessionM
                       arguments: ''
                     }
                   };
+                  currentToolCall = toolCalls[index];
                 }
 
                 // Update tool call data
@@ -259,6 +260,13 @@ async function streamConversation(res, session, messages, currentAgent, sessionM
                 }
                 if (toolCallDelta.function?.name) {
                   toolCalls[index].function.name = toolCallDelta.function.name;
+
+                  // Send tool_selected event as soon as we get the tool name
+                  res.write(`data: ${JSON.stringify({
+                    type: 'tool_selected',
+                    sender: currentAgent,
+                    toolName: toolCallDelta.function.name
+                  })}\n\n`);
                 }
                 if (toolCallDelta.function?.arguments) {
                   toolCalls[index].function.arguments += toolCallDelta.function.arguments;
