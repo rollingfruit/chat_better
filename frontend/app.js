@@ -500,23 +500,6 @@ class ConversationApp {
         textEl.innerHTML = SimpleMarkdown.render(fullContent);
     }
 
-    addToolIndicator(messageEl, toolData) {
-        const toolsEl = messageEl.querySelector('.message-tools');
-        const toolEl = document.createElement('div');
-        toolEl.className = 'tool-indicator bg-gradient-to-r from-purple-100 to-pink-100 border border-purple-200 text-purple-800 px-3 py-1 rounded-full text-sm font-medium cursor-pointer hover:shadow-md transition-all duration-200 inline-flex items-center space-x-2';
-        toolEl.dataset.toolName = toolData.toolName;
-        toolEl.dataset.reason = toolData.reason;
-        toolEl.dataset.application = toolData.application;
-
-        const toolName = this.formatToolName(toolData.toolName);
-        toolEl.innerHTML = `
-            <span class="text-base">${this.getToolIcon(toolData.toolName)}</span>
-            <span>${toolName}</span>
-        `;
-
-        toolsEl.appendChild(toolEl);
-    }
-
 
     updateOrAddToolIndicator(messageEl, toolData) {
         const toolsEl = messageEl.querySelector('.message-tools');
@@ -555,7 +538,7 @@ class ConversationApp {
         } else {
             // No placeholder found, create a new expanded card directly.
             const toolEl = document.createElement('div');
-            toolEl.className = 'tool-indicator-expanded bg-gradient-to-r from-purple-50 to-pink-50 border-2 border-purple-300 rounded-lg p-4 shadow-md transition-all duration-300';
+            toolEl.className = 'tool-indicator bg-gradient-to-r from-purple-50 to-pink-50 border-2 border-purple-300 rounded-lg p-4 shadow-md transition-all duration-300';
             toolEl.dataset.toolName = toolData.toolName;
             toolEl.dataset.expanded = 'true';
             toolEl.dataset.reason = toolData.reason;

@@ -1,0 +1,65 @@
+{
+  "find_common_ground": {
+    "metadata": {
+      "name": "寻找共同点",
+      "description": "识别共同的经历、兴趣或价值观来建立联系",
+      "icon": "🤝",
+      "example": "我也有过类似的经历... / 我们都似乎喜欢... / 这让我想起了我...",
+      "category": "social"
+    }
+  },
+  "FORD_method": {
+    "metadata": {
+      "name": "F.O.R.D. 聊天法",
+      "description": "询问家庭(Family)、工作(Occupation)、娱乐(Recreation)或梦想(Dreams)来寻找对话话题",
+      "icon": "👥",
+      "example": "告诉我关于你的家庭 / 你是做什么工作的？ / 你平时喜欢做什么消遣？ / 你有什么目标或梦想？",
+      "category": "social"
+    }
+  },
+  "open_ended_question": {
+    "metadata": {
+      "name": "开放性问题",
+      "description": "提出需要详细回答而非简单是/否的问题，鼓励对方详细阐述",
+      "icon": "❓",
+      "example": "那种体验对你来说是什么样的？ / 你是怎么进入这个领域的？ / 这其中最有趣的部分是什么？",
+      "category": "professional"
+    }
+  },
+  "active_listening_reflection": {
+    "metadata": {
+      "name": "积极倾听与反映",
+      "description": "通过复述对方所说的话来表明你在认真倾听",
+      "icon": "👂",
+      "example": "所以你的意思是... / 听起来你真的很享受... / 我能感受到你对此很有热情...",
+      "category": "supportive"
+    }
+  },
+  "mirroring_technique": {
+    "metadata": {
+      "name": "镜像技巧",
+      "description": "巧妙地模仿对方的沟通风格、精力或肢体语言",
+      "icon": "🪞",
+      "example": "匹配对方的热情程度、说话节奏或正式程度",
+      "category": "professional"
+    }
+  },
+  "emotional_labeling": {
+    "metadata": {
+      "name": "情感标签",
+      "description": "承认并指出你在对话中观察到的情感",
+      "icon": "💭",
+      "example": "你看起来对此很兴奋 / 我能感受到一些挫败感 / 那一定很有挑战性",
+      "category": "professional"
+    }
+  },
+  "compliment_genuine": {
+    "metadata": {
+      "name": "真诚赞美",
+      "description": "给予真实、具体的赞美，表明你在用心关注",
+      "icon": "⭐",
+      "example": "我很佩服你对...的投入 / 你解释得很好... / 这是个很有创意的方法",
+      "category": "supportive"
+    }
+  }
+}

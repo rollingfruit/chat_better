@@ -1,6 +1,6 @@
 const express = require('express');
 const ScenarioLoader = require('../utils/scenarioLoader');
-const { getToolsByCategory, getAllToolNames, PRINCIPLE_DESCRIPTIONS } = require('../utils/toolLibrary');
+const { getAllToolsForFrontend } = require('../utils/toolLibrary');
 
 const router = express.Router();
 const scenarioLoader = new ScenarioLoader();
@@ -27,12 +27,7 @@ router.get('/', async (req, res) => {
 // GET /api/scenarios/tools/list - Get simple list of all tool names
 router.get('/tools/list', async (req, res) => {
   try {
-    const toolNames = getAllToolNames();
-    const toolsList = toolNames.map(name => ({
-      name,
-      ...PRINCIPLE_DESCRIPTIONS[name]
-    }));
-
+    const toolsList = getAllToolsForFrontend();
     res.json({
       success: true,
       tools: toolsList,
@@ -51,11 +46,20 @@ router.get('/tools/list', async (req, res) => {
 // GET /api/scenarios/tools - Get all available tools organized by category
 router.get('/tools', async (req, res) => {
   try {
-    const toolsByCategory = getToolsByCategory();
+    const allTools = getAllToolsForFrontend();
+    const toolsByCategory = allTools.reduce((acc, tool) => {
+        const category = tool.category || 'general';
+        if (!acc[category]) {
+            acc[category] = [];
+        }
+        acc[category].push(tool);
+        return acc;
+    }, {});
+
     res.json({
       success: true,
       tools: toolsByCategory,
-      totalCount: getAllToolNames().length
+      totalCount: allTools.length
     });
   } catch (error) {
     console.error('Failed to load tools:', error);

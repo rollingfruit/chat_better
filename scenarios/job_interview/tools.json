@@ -1,0 +1,74 @@
+{
+  "interview_questioning": {
+    "metadata": {
+      "name": "面试提问技巧",
+      "description": "运用结构化问题和追问技巧深入了解候选人能力",
+      "icon": "🎯",
+      "example": "请描述一个具体的例子... / 那种情况下你是如何处理的？ / 你从中学到了什么？",
+      "category": "interview_interviewer"
+    }
+  },
+  "behavioral_assessment": {
+    "metadata": {
+      "name": "行为面试评估",
+      "description": "通过STAR方法评估候选人的过往行为和决策能力",
+      "icon": "📊",
+      "example": "请用STAR格式描述... / 在那种情况下，你采取了什么行动？ / 结果如何？",
+      "category": "interview_interviewer"
+    }
+  },
+  "pressure_testing": {
+    "metadata": {
+      "name": "压力测试",
+      "description": "通过适度的压力问题测试候选人的抗压能力和思维敏捷性",
+      "icon": "⚡",
+      "example": "如果时间很紧，你会如何处理？ / 假设资源有限，你的优先级是什么？",
+      "category": "interview_interviewer"
+    }
+  },
+  "company_culture_evaluation": {
+    "metadata": {
+      "name": "企业文化匹配度评估",
+      "description": "评估候选人与公司价值观和文化的契合度",
+      "icon": "🏢",
+      "example": "我们公司重视...，你如何看待？ / 描述你理想的工作环境",
+      "category": "interview_interviewer"
+    }
+  },
+  "STAR_storytelling": {
+    "metadata": {
+      "name": "STAR故事叙述",
+      "description": "使用情况-任务-行动-结果的结构化方式回答行为问题",
+      "icon": "⭐",
+      "example": "当时的情况是... / 我的任务是... / 我采取的行动是... / 最终的结果是...",
+      "category": "interview_candidate"
+    }
+  },
+  "value_demonstration": {
+    "metadata": {
+      "name": "价值展示",
+      "description": "通过具体案例和数据展示自己能为公司带来的价值",
+      "icon": "💎",
+      "example": "我在之前的项目中... / 这为公司节省了... / 我的贡献帮助团队...",
+      "category": "interview_candidate"
+    }
+  },
+  "weakness_reframing": {
+    "metadata": {
+      "name": "弱点重构",
+      "description": "诚实地承认弱点并展示改进努力和学习态度",
+      "icon": "🔄",
+      "example": "我意识到我在...方面需要提升 / 为此我... / 现在我已经...",
+      "category": "interview_candidate"
+    }
+  },
+  "strategic_questioning": {
+    "metadata": {
+      "name": "战略性提问",
+      "description": "提出深思熟虑的问题展示对公司和职位的理解和兴趣",
+      "icon": "🤔",
+      "example": "公司在...方面的战略是什么？ / 这个职位面临的最大挑战是什么？",
+      "category": "interview_candidate"
+    }
+  }
+}

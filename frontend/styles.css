@@ -322,6 +322,7 @@ code, .technical {
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
     backdrop-filter: blur(10px);
     min-width: 250px;
+    max-width: 400px;
     position: relative;
 }
 
@@ -1220,10 +1221,6 @@ code, .technical {
         font-size: 0.9rem;
     }
 
-    .tool-overlay-content {
-        min-width: 200px;
-        padding: 0.5rem;
-    }
 
     .modal-content {
         padding: 1.25rem;
