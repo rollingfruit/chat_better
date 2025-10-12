@@ -513,13 +513,65 @@ const candidateTools = {
   }
 };
 
+const perspectiveTools = {
+  "visionary_framing": {
+    "type": "function",
+    "function": {
+      "name": "apply_conversational_principle",
+      "description": "运用特定的沟通原则或技巧来改善对话流程和与对方的连接。",
+      "parameters": { "type": "object", "properties": { "principle_name": { "type": "string", "enum": ["visionary_framing"] }, "reason": { "type": "string" }, "application": { "type": "string" } }, "required": ["principle_name", "reason", "application"] }
+    }
+  },
+  "first_principles_thinking": {
+    "type": "function",
+    "function": {
+      "name": "apply_conversational_principle",
+      "description": "运用特定的沟通原则或技巧来改善对话流程和与对方的连接。",
+      "parameters": { "type": "object", "properties": { "principle_name": { "type": "string", "enum": ["first_principles_thinking"] }, "reason": { "type": "string" }, "application": { "type": "string" } }, "required": ["principle_name", "reason", "application"] }
+    }
+  },
+  "asymmetric_leverage": {
+    "type": "function",
+    "function": {
+      "name": "apply_conversational_principle",
+      "description": "运用特定的沟通原则或技巧来改善对话流程和与对方的连接。",
+      "parameters": { "type": "object", "properties": { "principle_name": { "type": "string", "enum": ["asymmetric_leverage"] }, "reason": { "type": "string" }, "application": { "type": "string" } }, "required": ["principle_name", "reason", "application"] }
+    }
+  },
+  "reality_check": {
+    "type": "function",
+    "function": {
+      "name": "apply_conversational_principle",
+      "description": "运用特定的沟通原则或技巧来改善对话流程和与对方的连接。",
+      "parameters": { "type": "object", "properties": { "principle_name": { "type": "string", "enum": ["reality_check"] }, "reason": { "type": "string" }, "application": { "type": "string" } }, "required": ["principle_name", "reason", "application"] }
+    }
+  },
+  "burnout_expression": {
+    "type": "function",
+    "function": {
+      "name": "apply_conversational_principle",
+      "description": "运用特定的沟通原则或技巧来改善对话流程和与对方的连接。",
+      "parameters": { "type": "object", "properties": { "principle_name": { "type": "string", "enum": ["burnout_expression"] }, "reason": { "type": "string" }, "application": { "type": "string" } }, "required": ["principle_name", "reason", "application"] }
+    }
+  },
+  "incremental_improvement_suggestion": {
+    "type": "function",
+    "function": {
+      "name": "apply_conversational_principle",
+      "description": "运用特定的沟通原则或技巧来改善对话流程和与对方的连接。",
+      "parameters": { "type": "object", "properties": { "principle_name": { "type": "string", "enum": ["incremental_improvement_suggestion"] }, "reason": { "type": "string" }, "application": { "type": "string" } }, "required": ["principle_name", "reason", "application"] }
+    }
+  }
+};
+
 // Combine all tools into a single registry
 const allTools = {
   ...socialTools,
   ...professionalTools,
   ...supportiveTools,
   ...interviewerTools,
-  ...candidateTools
+  ...candidateTools,
+  ...perspectiveTools
 };
 
 // Create master list for backward compatibility - single combined tool with all principles
@@ -549,7 +601,13 @@ const CONVERSATION_TOOLS = [{
             "STAR_storytelling",
             "value_demonstration",
             "weakness_reframing",
-            "strategic_questioning"
+            "strategic_questioning",
+            "visionary_framing",
+            "first_principles_thinking",
+            "asymmetric_leverage",
+            "reality_check",
+            "burnout_expression",
+            "incremental_improvement_suggestion"
           ]
         },
         "reason": {
@@ -673,6 +731,49 @@ const PRINCIPLE_DESCRIPTIONS = {
     "icon": "🤔",
     "example": "公司在...方面的战略是什么？ / 这个职位面临的最大挑战是什么？",
     "category": "interview_candidate"
+  },
+  // 新增：首富与打工人工具
+  "visionary_framing": {
+    "name": "愿景重构",
+    "description": "将当前问题置于宏大、长期的愿景中进行解读，提升格局",
+    "icon": "🚀",
+    "example": "这不仅仅是...，这是为了实现人类...的第一步 / 从十年后的角度看，这个问题...",
+    "category": "perspective"
+  },
+  "first_principles_thinking": {
+    "name": "第一性原理思考",
+    "description": "将问题分解为最基本的、不可再分的元素，从源头挑战固有假设",
+    "icon": "⚛️",
+    "example": "我们为什么需要...？它的物理本质是什么？ / 如果我们从零开始，会怎么做？",
+    "category": "perspective"
+  },
+  "asymmetric_leverage": {
+    "name": "非对称杠杆",
+    "description": "识别并聚焦于那些投入小、但可能产生巨大回报的关键行动点",
+    "icon": "⚖️",
+    "example": "哪个点的改变能撬动整个系统？ / 什么是我们可以做、但其他人很难模仿的？",
+    "category": "perspective"
+  },
+  "reality_check": {
+    "name": "现实检验",
+    "description": "将宏大的讨论拉回到普通人的日常现实和实际约束中",
+    "icon": "🏠",
+    "example": "这个想法很好，但对于一个需要考虑房租的人来说... / 理想情况下是的，但现实是我明天...",
+    "category": "perspective"
+  },
+  "burnout_expression": {
+    "name": "倦怠表达",
+    "description": "清晰地表达因长期压力、过度工作而产生的疲惫和无力感",
+    "icon": "😫",
+    "example": "我感觉自己像个被耗尽的电池 / 每天都在重复，看不到希望 / 我对...已经麻木了",
+    "category": "perspective"
+  },
+  "incremental_improvement_suggestion": {
+    "name": "渐进式改善建议",
+    "description": "提出具体的、小范围的、可立即执行的改进措施，而非颠覆性变革",
+    "icon": "📈",
+    "example": "我们能不能先把...流程优化一下？ / 如果每周能有...，情况就会好很多 / 一个小小的改变或许是...",
+    "category": "perspective"
   }
 };
 

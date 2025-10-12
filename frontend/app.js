@@ -471,6 +471,14 @@ class ConversationApp {
         const isFirstToken = textEl.textContent === '';
 
         if (isFirstToken) {
+            // Keep tool overlay visible for 2s after text starts streaming.
+            if (this.toolDetailTimeout) {
+                clearTimeout(this.toolDetailTimeout);
+            }
+            this.toolDetailTimeout = setTimeout(() => {
+                this.hideHeaderToolDetail();
+            }, 2000);
+
             // Collapse any expanded tool indicators before showing message content
             this.collapseExpandedTools(messageEl);
         }

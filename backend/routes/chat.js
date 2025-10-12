@@ -502,20 +502,30 @@ ${session.userHint ? `\n用户指导：${session.userHint}\n请在你的下一�
     // Long conversation: apply compression
     console.log(`📚 Compressing conversation history: ${relevantHistory.length} -> ${keepRecentCount} messages`);
 
-    // Keep recent messages
     const recentHistory = relevantHistory.slice(-keepRecentCount);
-
-    // Compress middle part with summary
     const compressedCount = relevantHistory.length - keepRecentCount;
-    const topicsInCompressed = await summarizeConversationTopics(relevantHistory.slice(0, -keepRecentCount));
+    const historyToSummarize = relevantHistory.slice(0, -keepRecentCount);
 
-    const compressionSummary = `[此处省略了${compressedCount}条早期对话消息。${topicsInCompressed.length > 0 ?
-      `在早期对话中，双方主要讨论了：${topicsInCompressed.join('、')}。` :
-      ''}继续保持角色一致性和对话自然流畅。]`;
+    // Generate structured summary
+    const summaryObject = await summarizeConversationTopics(historyToSummarize, agentData, otherAgentData, currentAgent);
+
+    let compressionSummary = `[此处省略了 ${compressedCount} 条早期对话。以下是这些对话的结构化摘要，以帮助你记起关键信息：\n\n`;
+    if (summaryObject) {
+        compressionSummary += `**已讨论主题**: ${summaryObject.discussed_topics?.join('、') || '无'}\n`;
+        compressionSummary += `**你的过往立场**: ${currentAgent === 'Agent 1' ? summaryObject.agent_1_stance : summaryObject.agent_2_stance || '未记录'}\n`;
+        compressionSummary += `**对方的过往立场**: ${currentAgent === 'Agent 1' ? summaryObject.agent_2_stance : summaryObject.agent_1_stance || '未记录'}\n`;
+        if (summaryObject.key_quotes && summaryObject.key_quotes.length > 0) {
+            compressionSummary += `**关键过往发言**: \n${summaryObject.key_quotes.map(q => `- "${q}"`).join('\n')}\n`;
+        }
+        if (summaryObject.unresolved_conflicts) {
+            compressionSummary += `**待解决的矛盾**: ${summaryObject.unresolved_conflicts}\n`;
+        }
+    }
+    compressionSummary += "\n请基于以上摘要和最近的对话，继续保持角色一致性和对话自然流畅。]";
 
     messages.push({
-      role: 'system',
-      content: compressionSummary
+        role: 'system',
+        content: compressionSummary
     });
 
     // Add recent history
@@ -554,45 +564,35 @@ function addHistoryMessages(messages, history, currentAgent) {
   }
 }
 
-async function summarizeConversationTopics(compressedHistory) {
+async function summarizeConversationTopics(compressedHistory, agentData, otherAgentData, currentAgent) {
   try {
-    // 提取对话内容，过滤掉工具调用相关的消息
     const conversationContent = compressedHistory
       .filter(msg => msg.role === 'assistant' && msg.content && msg.content.trim().length > 0)
-      .map(msg => `${msg.agent}: ${msg.content}`)
+      .map(msg => `${msg.agent === 'Agent 1' ? agentData.name : otherAgentData.name}: ${msg.content}`)
       .join('\n\n');
 
     if (conversationContent.length === 0) {
-      return [];
+      return null;
     }
 
-    // 构造总结提示
-    const summaryPrompt = `请从以下对话历史中，提炼出3-5个核心话题，并以标签形式返回，用逗号分隔。
-例如：职业转型, 自由职业, 工作环境, 创意灵感
+    const summaryPrompt = `You are a conversation analyst. Your task is to create a structured JSON summary of the provided conversation history. The goal is to remind the AI agents of the key details from the early part of the conversation.\n\nThe conversation is between ${agentData.name} (Agent 1) and ${otherAgentData.name} (Agent 2).\n\n**Conversation History to Summarize:**\n---\n${conversationContent}\n---\n\n**Instructions:**\nBased on the history provided, generate a JSON object with the following structure. Be concise and capture the essence of the conversation.\n- **discussed_topics**: An array of 3-5 main topics discussed.\n- **agent_1_stance**: A brief summary of Agent 1's main viewpoint, arguments, or feelings.\n- **agent_2_stance**: A brief summary of Agent 2's main viewpoint, arguments, or feelings.\n- **key_quotes**: An array containing 1-2 exact, verbatim "golden quotes" from the conversation that are crucial for remembering the emotional state or core argument of the agents. Prioritize quotes from the agent who is about to speak (${currentAgent === 'Agent 1' ? agentData.name : otherAgentData.name}).\n- **unresolved_conflicts**: A brief description of the main point of disagreement or tension that has not yet been resolved.\n\n**Output only the raw JSON object, with no other text or explanations.**\n\nExample JSON output:\n{\n  "discussed_topics": ["工作与生活的平衡", "时间管理技巧", "职业倦怠"],\n  "agent_1_stance": "认为通过高效工作和第一性原理可以解决问题，强调个人能动性。",\n  "agent_2_stance": "反复强调现实限制（如会议、bug），感到身心俱疲，对宏大理论持怀疑态度。",\n  "key_quotes": [\n    "小李: '我每天加班到晚上11点，连睡个好觉的时间都没有...'"\n  ],\n  "unresolved_conflicts": "双方在“是否有足够的可支配时间”这一核心前提上尚未达成共识。"\n}\n`;
 
-对话内容：
-${conversationContent}
+    const messages = [{ role: 'user', content: summaryPrompt }];
+    const summaryJsonString = await openRouterClient.createChat(messages, 'anthropic/claude-3-haiku'); // Use a faster model for summarization
 
-请直接返回话题标签，用逗号分隔：`;
-
-    const messages = [{
-      role: 'user',
-      content: summaryPrompt
-    }];
-
-    // 调用非流式API获取总结
-    const topicsSummary = await openRouterClient.createChat(messages);
-
-    if (topicsSummary && topicsSummary.trim()) {
-      // 解析返回的话题标签
-      return topicsSummary.trim().split(',').map(topic => topic.trim()).filter(topic => topic.length > 0);
+    if (summaryJsonString) {
+      try {
+        return JSON.parse(summaryJsonString);
+      } catch (e) {
+        console.error('Failed to parse summary JSON:', e);
+        return null; // Failed to parse, return nothing
+      }
     }
 
-    return [];
+    return null;
   } catch (error) {
     console.error('Failed to summarize conversation topics:', error);
-    // 如果总结失败，返回空数组，保持原有的工具总结逻辑作为后备
-    return extractToolsAsFallback(compressedHistory);
+    return null;
   }
 }
 
