@@ -1,0 +1,74 @@
+{
+  "delay_tactics": {
+    "metadata": {
+      "name": "拖延战术",
+      "description": "使用流程、审批等理由推迟问题解决,避免当场做出承诺",
+      "icon": "⏳",
+      "example": "这个需要走流程,不是我能决定的 / 我需要上报领导,等审批结果 / 这个事情比较复杂,需要时间调查",
+      "category": "deflection"
+    }
+  },
+  "emotional_appeal": {
+    "metadata": {
+      "name": "情感诉求",
+      "description": "强调物业工作的辛苦和不易,试图获得同情和理解",
+      "icon": "😢",
+      "example": "我们物业也很辛苦,每天早出晚归 / 大家都是邻居,何必闹得这么僵 / 我们也有难处,预算有限人手不够",
+      "category": "deflection"
+    }
+  },
+  "procedural_deflection": {
+    "metadata": {
+      "name": "程序推诿",
+      "description": "将问题归咎于制度、流程或合同条款,规避直接责任",
+      "icon": "📋",
+      "example": "按照合同规定,这个不在服务范围内 / 这需要业委会同意才行 / 公司有规定,我们也没办法",
+      "category": "deflection"
+    }
+  },
+  "responsibility_shifting": {
+    "metadata": {
+      "name": "责任转移",
+      "description": "将问题归咎于业主、上级或第三方,避免承担责任",
+      "icon": "👉",
+      "example": "您不缴费,我们也没法提供服务 / 这是总公司的决定 / 这是开发商遗留问题,不是我们物业的责任",
+      "category": "deflection"
+    }
+  },
+  "evidence_based_argumentation": {
+    "metadata": {
+      "name": "证据论证",
+      "description": "使用照片、录音、文件等证据支持论点,增强说服力",
+      "icon": "📸",
+      "example": "这是消控室大门紧锁的照片,带时间戳 / 我这里有连续三个月的问题记录 / 根据这份监控记录显示...",
+      "category": "argumentation"
+    }
+  },
+  "regulatory_citation": {
+    "metadata": {
+      "name": "法规引用",
+      "description": "引用相关法律法规、行业标准或合同条款来支持诉求",
+      "icon": "⚖️",
+      "example": "根据《物业管理条例》第X条... / 按照《住宅物业服务标准》规定... / 合同中明确约定...",
+      "category": "argumentation"
+    }
+  },
+  "logical_dismantling": {
+    "metadata": {
+      "name": "逻辑拆解",
+      "description": "分析对方论述中的逻辑漏洞,用理性思维反驳不合理说法",
+      "icon": "🔍",
+      "example": "您说人手不足,但为什么不调整收费或增加人员? / 辛苦过程不等于服务效果 / 这是因果倒置,应该是...",
+      "category": "argumentation"
+    }
+  },
+  "value_comparison": {
+    "metadata": {
+      "name": "价值对比",
+      "description": "通过对比同类服务的价格和质量,突出现有服务的不合理性",
+      "icon": "📊",
+      "example": "同样5.9元/㎡,隔壁小区有...而我们连...都没有 / 根据市场标准,这个价位应该包含... / 其他小区4元/㎡都能做到...",
+      "category": "argumentation"
+    }
+  }
+}

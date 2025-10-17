@@ -125,14 +125,36 @@ class ConversationApp {
         }
     }
 
+    getScenarioDisplayName(scenarioId) {
+        const nameMap = {
+            'job_interview': '面试场景',
+            'coffee_shop': '咖啡店邂逅',
+            'tech_meetup': '技术交流会',
+            'billionaire_vs_worker': '首富对话打工人',
+            'property_dispute': '物业纠纷'
+        };
+        return nameMap[scenarioId] || scenarioId;
+    }
+
+    getScenarioDisplayDescription(scenarioId) {
+        const descMap = {
+            'job_interview': '练习专业的面试技巧和评估方法',
+            'coffee_shop': '在轻松的环境中练习与陌生人的随意对话',
+            'tech_meetup': '在技术活动中练习建立人脉关系',
+            'billionaire_vs_worker': '关于工作、生活和价值观的对话',
+            'property_dispute': '维权业主与物业经理就高额物业费和服务质量展开对话'
+        };
+        return descMap[scenarioId] || '对话练习场景';
+    }
+
     renderScenarios(scenarios, container) {
         container.innerHTML = scenarios.map(scenario => `
             <div class="scenario-card bg-gradient-to-br from-white to-gray-50 border border-gray-200 rounded-xl p-6 cursor-pointer transition-all duration-300 hover:shadow-lg hover:scale-105 hover:border-blue-300"
                  data-scenario-id="${scenario.id}">
-                <h3 class="text-xl font-bold text-gray-800 mb-3">${scenario.name}</h3>
-                <p class="text-gray-600 mb-4 line-clamp-3">${scenario.description}</p>
+                <h3 class="text-xl font-bold text-gray-800 mb-3">${this.getScenarioDisplayName(scenario.id)}</h3>
+                <p class="text-gray-600 mb-4 line-clamp-3">${this.getScenarioDisplayDescription(scenario.id)}</p>
                 <div class="agent-count inline-flex items-center bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">
-                    <span class="mr-1">👥</span>${scenario.agents} agents
+                    <span class="mr-1">👥</span>${scenario.agents} 个角色
                 </div>
             </div>
         `).join('');
@@ -595,7 +617,17 @@ class ConversationApp {
             'STAR_storytelling': 'STAR故事叙述',
             'value_demonstration': '价值展示',
             'weakness_reframing': '弱点重构',
-            'strategic_questioning': '战略性提问'
+            'strategic_questioning': '战略性提问',
+            // 物业经理工具
+            'delay_tactics': '拖延战术',
+            'emotional_appeal': '情感诉求',
+            'procedural_deflection': '程序推诿',
+            'responsibility_shifting': '责任转移',
+            // 业主工具
+            'evidence_based_argumentation': '证据论证',
+            'regulatory_citation': '法规引用',
+            'logical_dismantling': '逻辑拆解',
+            'value_comparison': '价值对比'
         };
         return names[toolName] || toolName;
     }
@@ -618,7 +650,17 @@ class ConversationApp {
             'STAR_storytelling': '⭐',
             'value_demonstration': '💎',
             'weakness_reframing': '🔄',
-            'strategic_questioning': '🤔'
+            'strategic_questioning': '🤔',
+            // 物业经理工具
+            'delay_tactics': '⏳',
+            'emotional_appeal': '😢',
+            'procedural_deflection': '📋',
+            'responsibility_shifting': '👉',
+            // 业主工具
+            'evidence_based_argumentation': '📸',
+            'regulatory_citation': '⚖️',
+            'logical_dismantling': '🔍',
+            'value_comparison': '📊'
         };
         return icons[toolName] || '🛠️';
     }
@@ -916,7 +958,17 @@ class ConversationApp {
             'STAR_storytelling': '使用情况-任务-行动-结果的结构化方式回答行为问题',
             'value_demonstration': '通过具体案例和数据展示自己能为公司带来的价值',
             'weakness_reframing': '诚实地承认弱点并展示改进努力和学习态度',
-            'strategic_questioning': '提出深思熟虑的问题展示对公司和职位的理解和兴趣'
+            'strategic_questioning': '提出深思熟虑的问题展示对公司和职位的理解和兴趣',
+            // 物业经理工具
+            'delay_tactics': '使用流程、审批等理由推迟问题解决，避免当场做出承诺',
+            'emotional_appeal': '强调物业工作的辛苦和不易，试图获得同情和理解',
+            'procedural_deflection': '将问题归咎于制度、流程或合同条款，规避直接责任',
+            'responsibility_shifting': '将问题归咎于业主、上级或第三方，避免承担责任',
+            // 业主工具
+            'evidence_based_argumentation': '使用照片、录音、文件等证据支持论点，增强说服力',
+            'regulatory_citation': '引用相关法律法规、行业标准或合同条款来支持诉求',
+            'logical_dismantling': '分析对方论述中的逻辑漏洞，用理性思维反驳不合理说法',
+            'value_comparison': '通过对比同类服务的价格和质量，突出现有服务的不合理性'
         };
         return descriptions[toolName] || '沟通技巧';
     }
